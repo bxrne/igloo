@@ -4,15 +4,18 @@
 	"description": "Igloo is an assignment manager for BSc&MSc in ISE at the University of Limerick.",
 	"author": "Adam Byrne",
 	"main": "index.js",
+	"type": "module",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"run": "./index.js"
 	},
 	"bin": {
 		"execute": "index.js"
 	},
 	"license": "ISC",
 	"dependencies": {
-		"dotenv": "^16.0.3",
+		"chalk": "^5.1.2",
+		"inquirer": "^9.1.4",
 		"puppeteer": "^19.2.2"
 	}
 }
