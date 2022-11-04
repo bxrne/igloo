@@ -1,6 +1,6 @@
+#!/usr/bin/env node
 const puppeteer = require("puppeteer");
 require("dotenv").config();
-
 fs = require("fs");
 
 (async () => {
@@ -60,10 +60,6 @@ fs = require("fs");
 			}
 		}
 	}
-
-	await fs.writeFile("assignments.json", JSON.stringify(assignments), (err) => {
-		if (err) throw err;
-	});
-
 	await browser.close();
+	console.table(assignments, ["assignment", "deadline", "status", "graded"]);
 })();
