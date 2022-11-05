@@ -3,49 +3,10 @@
 import puppeteer from "puppeteer";
 import chalk from "chalk";
 import inquirer from "inquirer";
+import { createSpinner } from "nanospinner";
+import figlet from "figlet";
 
 (async () => {
-	const fetchModuleNames = async () => {
-		const moduleListSelector =
-			"#region-main > div > div > div > section:nth-child(3) > ul > li > dl > dd > ul";
-		await page.waitForSelector(moduleListSelector);
-		const moduleList = await page.evaluate((moduleListSelector) => {
-			const modules = [];
-			const list = document.querySelector(moduleListSelector).childNodes;
-			list.forEach((item) => {
-				modules.push({ name: item.innerText, url: item.firstChild.href });
-			});
-			return modules;
-		}, moduleListSelector);
-
-		const moduleNames = [];
-		moduleList.forEach((k) => {
-			moduleNames.push(k.name);
-		});
-		return moduleNames;
-	};
-
-	const fetchModuleLinks = async () => {
-		const moduleListSelector =
-			"#region-main > div > div > div > section:nth-child(3) > ul > li > dl > dd > ul";
-		await page.waitForSelector(moduleListSelector);
-		const moduleList = await page.evaluate((moduleListSelector) => {
-			const modules = [];
-			const list = document.querySelector(moduleListSelector).childNodes;
-			list.forEach((item) => {
-				modules.push({ name: item.innerText, url: item.firstChild.href });
-			});
-			return modules;
-		}, moduleListSelector);
-
-		const moduleLinks = [];
-		moduleList.forEach((k) => {
-			moduleLinks.push(k.url);
-		});
-		return moduleLinks;
-	};
-
-	// function of both fetchModuleNames and fetchModuleLinks
 	const fetchModuleData = async () => {
 		const moduleListSelector =
 			"#region-main > div > div > div > section:nth-child(3) > ul > li > dl > dd > ul";
@@ -102,6 +63,7 @@ import inquirer from "inquirer";
 			message: "Enter your password",
 			mask: true,
 		});
+
 		await page.type("#username", username.username);
 		await page.type("#password", password.password);
 		await page.click("#loginbtn");
@@ -120,7 +82,8 @@ import inquirer from "inquirer";
 	};
 
 	const fetchAssignments = async () => {
-		console.log("🏃 Loading assignments...");
+		const spinner = createSpinner("Fetching data").start();
+
 		const assignmentsSelector = ".modtype_assign";
 		await page.waitForSelector(assignmentsSelector);
 		const assignments = await page.evaluate((assignmentsSelector) => {
@@ -135,11 +98,13 @@ import inquirer from "inquirer";
 				}
 			);
 		}, assignmentsSelector);
+		spinner.success({ text: chalk.green("Fetched data") });
 		return assignments;
 	};
 
 	const cleanAssignmentsData = async (assignments) => {
-		console.log("🧹 Cleaning assignments data...");
+		const spinner = createSpinner("Validating data").start();
+
 		for (const assignment of assignments) {
 			await page.goto(assignment.link);
 			const table = await page.$(".generaltable");
@@ -170,8 +135,7 @@ import inquirer from "inquirer";
 				}
 			}
 		}
-		console.log(chalk.green("✅ Done.\n"));
-
+		spinner.success({ text: chalk.green("Validated data") });
 		return assignments;
 	};
 
@@ -244,10 +208,12 @@ import inquirer from "inquirer";
 	const page = await browser.newPage();
 
 	console.clear();
+	console.log(figlet.textSync("IGLOO"));
+	//explain purpose and origin of tool
 	console.log(
-		chalk.bold(
-			"\n 🧊 Welcome to the Igloo! \nA Moodle interface for CSIS at the University of Limerick \n"
-		)
+		chalk.bold(" Keep track of your Moodle Assignments!\n ") +
+			chalk.italic("Created by: Adam Byrne \n") +
+			chalk.gray("For CSIS students at the University of Limerick \n")
 	);
 
 	await login();
