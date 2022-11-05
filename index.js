@@ -209,7 +209,6 @@ import figlet from "figlet";
 
 	console.clear();
 	console.log(figlet.textSync("IGLOO"));
-	//explain purpose and origin of tool
 	console.log(
 		chalk.bold(" Keep track of your Moodle Assignments!\n ") +
 			chalk.italic("Created by: Adam Byrne \n") +
