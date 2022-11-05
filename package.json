@@ -1,18 +1,28 @@
 {
-	"name": "igloo",
+	"name": "igloo-ibc2",
 	"version": "0.0.1",
-	"description": "Igloo is an assignment manager for BSc&MSc in ISE at the University of Limerick.",
+	"description": "This tool helps CS students at the University of Limerick keep track of their assignments.",
 	"author": "Adam Byrne",
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"run": "./index.js"
+		"start": "node ."
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/theadambyrne/igloo.git"
+	},
+	"keywords": [
+		"igloo",
+		"ibc2",
+		"assignment",
+		"university",
+		"limerick"
+	],
+	"license": "MIT",
 	"bin": {
 		"execute": "index.js"
 	},
-	"license": "ISC",
 	"dependencies": {
 		"chalk": "^5.1.2",
 		"figlet": "^1.5.2",
