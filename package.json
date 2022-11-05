@@ -1,6 +1,6 @@
 {
 	"name": "igloo-ibc2",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "This tool helps CS students at the University of Limerick keep track of their assignments.",
 	"author": "Adam Byrne",
 	"main": "index.js",
