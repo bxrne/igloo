@@ -6,6 +6,8 @@ import inquirer from "inquirer";
 import { createSpinner } from "nanospinner";
 import figlet from "figlet";
 
+let run = true;
+
 const welcome = () => {
 	console.clear();
 	console.log(figlet.textSync("IGLOO"));
@@ -194,14 +196,7 @@ const displayAssignments = async (assignments) => {
 		type: "list",
 		name: "view",
 		message: "View:",
-		choices: [
-			"📝 To Do",
-			"📋 Graded",
-			"📄 Completed",
-			"📚 All",
-			"🔙 Back",
-			"🚪 Exit",
-		],
+		choices: ["📝 To Do", "📋 Graded", "📄 Completed", "📚 All", "🚪 Exit"],
 	});
 
 	const tableHeaders = ["assignment", "deadline", "status", "graded"];
@@ -219,13 +214,14 @@ const displayAssignments = async (assignments) => {
 		case "📚 All":
 			console.table(assignments, tableHeaders);
 			break;
-		case "🔙 Back":
-			// go back to module selection
-			console.log("Feature not implemented yet");
-			break;
 		case "🚪 Exit":
+			run = false;
 			process.exit(0);
 	}
+};
+
+const main = async (assignments) => {
+	await displayAssignments(assignments);
 };
 
 (async () => {
@@ -236,11 +232,13 @@ const displayAssignments = async (assignments) => {
 
 	const profileURL = await profile(page);
 	const moduleList = await loadModuleSelection(page, profileURL);
-
 	const moduleURL = await chooseModule(moduleList);
+
 	const assignmentList = await loadAssignmentsList(page, moduleURL);
 	const assignments = await fetchAssignmentsDetails(page, assignmentList);
-	await displayAssignments(assignments);
+	do {
+		await main(assignments);
+	} while (run);
 
 	await browser.close();
 })();
