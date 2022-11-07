@@ -7,6 +7,8 @@ import { createSpinner } from "nanospinner";
 import figlet from "figlet";
 
 let run = true;
+let assignments = [];
+let stayInModule = true;
 
 const welcome = () => {
 	console.clear();
@@ -39,7 +41,6 @@ const login = async (page) => {
 	await page.type("#password", password.password);
 	await page.click("#loginbtn");
 
-	// login error handling
 	await page.waitForNavigation();
 	if (page.url() === "https://moodle2.csis.ul.ie/login/index.php") {
 		spinner.error({ text: chalk.red("Login failed, please try again.") });
@@ -196,23 +197,37 @@ const displayAssignments = async (assignments) => {
 		type: "list",
 		name: "view",
 		message: "View:",
-		choices: ["📝 To Do", "📋 Graded", "📄 Completed", "📚 All", "🚪 Exit"],
+		choices: [
+			"📝 To Do",
+			"📋 Graded",
+			"📄 Completed",
+			"📚 All",
+			"⏪ Back",
+			"🚪 Exit",
+		],
 	});
 
 	const tableHeaders = ["assignment", "deadline", "status", "graded"];
 
 	switch (view.view) {
 		case "📝 To Do":
+			stayInModule = true;
 			console.table(todos(assignments), tableHeaders);
 			break;
 		case "📋 Graded":
+			stayInModule = true;
 			console.table(graded(assignments), tableHeaders);
 			break;
 		case "📄 Completed":
+			stayInModule = true;
 			console.table(completed(assignments), tableHeaders);
 			break;
 		case "📚 All":
+			stayInModule = true;
 			console.table(assignments, tableHeaders);
+			break;
+		case "⏪ Back":
+			stayInModule = false;
 			break;
 		case "🚪 Exit":
 			run = false;
@@ -220,8 +235,17 @@ const displayAssignments = async (assignments) => {
 	}
 };
 
-const main = async (assignments) => {
+const chooseAssignmentView = async (assignments) => {
 	await displayAssignments(assignments);
+};
+
+const chooseModuleView = async (page) => {
+	const _profileURL = await profile(page);
+	const _moduleList = await loadModuleSelection(page, _profileURL);
+	const _moduleURL = await chooseModule(_moduleList);
+
+	const _assignmentList = await loadAssignmentsList(page, _moduleURL);
+	assignments = await fetchAssignmentsDetails(page, _assignmentList);
 };
 
 (async () => {
@@ -229,16 +253,15 @@ const main = async (assignments) => {
 	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
 	await login(page);
-
-	const profileURL = await profile(page);
-	const moduleList = await loadModuleSelection(page, profileURL);
-	const moduleURL = await chooseModule(moduleList);
-
-	const assignmentList = await loadAssignmentsList(page, moduleURL);
-	const assignments = await fetchAssignmentsDetails(page, assignmentList);
-	do {
-		await main(assignments);
-	} while (run);
+	await chooseModuleView(page);
+	while (run) {
+		if (!stayInModule) {
+			await chooseModuleView(page);
+			await chooseAssignmentView(assignments);
+		} else {
+			await chooseAssignmentView(assignments);
+		}
+	}
 
 	await browser.close();
 })();
