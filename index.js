@@ -221,7 +221,7 @@ const displayAssignments = async (assignments) => {
 			break;
 		case "🔙 Back":
 			// go back to module selection
-
+			console.log("Feature not implemented yet");
 			break;
 		case "🚪 Exit":
 			process.exit(0);
