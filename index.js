@@ -213,18 +213,37 @@ const displayAssignments = async (assignments) => {
 	switch (view.view) {
 		case "📝 To Do":
 			stayInModule = true;
-			console.table(todos(assignments), tableHeaders);
+			const todoData = todos(assignments);
+			if (todoData.length == 0) {
+				console.log("Nothing to do! \n");
+				break;
+			}
+			console.table(todoData, tableHeaders);
 			break;
 		case "📋 Graded":
 			stayInModule = true;
-			console.table(graded(assignments), tableHeaders);
+			const gradedData = graded(assignments);
+			if (gradedData.length == 0) {
+				console.log("Nothing graded! \n");
+				break;
+			}
+			console.table(gradedData, tableHeaders);
 			break;
 		case "📄 Completed":
 			stayInModule = true;
-			console.table(completed(assignments), tableHeaders);
+			const completedData = completed(assignments);
+			if (completedData.length == 0) {
+				console.log("Nothing submitted! \n");
+				break;
+			}
+			console.table(completedData, tableHeaders);
 			break;
 		case "📚 All":
 			stayInModule = true;
+			if (assignments.length == 0) {
+				console.log("Nothing to see here! \n");
+				break;
+			}
 			console.table(assignments, tableHeaders);
 			break;
 		case "⏪ Back":
