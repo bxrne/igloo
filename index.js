@@ -208,7 +208,8 @@ const displayAssignments = async (assignments) => {
 	});
 
 	const tableHeaders = ["assignment", "deadline", "status", "graded"];
-
+	console.clear();
+	console.log(chalk.bold("\n" + view.view));
 	switch (view.view) {
 		case "📝 To Do":
 			stayInModule = true;
